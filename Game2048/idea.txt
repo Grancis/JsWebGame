@@ -1,0 +1,8 @@
+分发数字:
+1.GetRandomDigit
+2.GetRandomIndex
+3.IsEmpty
+4.
+
+先渲染 board
+NumberCell 
