@@ -1,11 +1,5 @@
-function showNumber(i,j,num) {
-    var numberCell=document.getElementById("number-cell-"+i+"-"+j);
-    numberCell.innerHTML(num);
-    numberCell.css('')
-
-    numberCell.animation({
-        background: getNumberBackgroundColor(num),
-        color: getNumberColor(num),
-
-    },50);
+function showMove(fromX,fromY,toX,toY) {
+    var numberCell=document.getElementById("number-cell-"+fromX+"-"+fromY);
+    numberCell.style.left=getPosLeft(toX,toY)+"px";
+    numberCell.style.top=getPosTop(toX,toY)+"px";
 }

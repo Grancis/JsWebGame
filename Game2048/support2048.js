@@ -9,8 +9,9 @@ function initBoard(){
     for(var i=0;i<4;++i){
         for(var j=0;j<4;++j){
             var gridCell=document.getElementById("grid-cell-"+i+"-"+j);
-            gridCell.css("top",getPosTop(i,j));
-            gridCell.css("left",getPosLeft(i,j));
+            gridCell.style.top=getPosTop(i,j)+"px";
+            gridCell.style.left=getPosLeft(i,j)+"px";
+
         }
     }
     for(var i=0;i<4;++i){
@@ -67,15 +68,20 @@ function getNumberColor(number) {
 }
 //拿到一个2或者4
 function getRandomNumber(){
-    return Math.random()>0.5?2:4;
+    return Math.random()>0.5 ? 2:4;
 }
 //拿到一个0到3的数，用于随机坐标
+//先封装一下坐标值
+index={
+    x:0,
+    y:0
+}
 function getRandomIndex() {
-    return floor(Math.random()*4);
+    return Math.floor(Math.random()*4);
 }
 //判断某一格是否为0
 function isEmpty(i,j) {
-    if(board[i][j])
+    if(board[i][j]===0)
         return true;
     else
         return false;
@@ -112,25 +118,34 @@ function bornNewNumber() {
 //更新数字显示，用number-cell来显示对应的board里的数字，若数字为零则不显示，即显示原来的grid-cell
 //作为动画后的显示
 function updateBoardView() {
-    document.getElementsByClassName("number-cell").remove();
+    container=document.getElementById('grid-container');
+    for(var i=0;i<16;++i)
+        for (var j=0;j<4;++j){
+     var number=document.getElementById("number-cell-"+i+"-"+j);
+     if(number)
+        number.parentNode.removeChild(number);
+     else ;
+    }
     for(var i=0;i<4;++i)
         for (var j=0;j<4;j++){
-            var theNumberCell=document.createElement('<div class="number-cell" id="number-cell-"+i+"-"+j+"></div>"');
-            document.getElementById("grid-container").appendChild(theNumberCell)
+            var theNumberCell=document.createElement("div");
+            theNumberCell.id="number-cell-"+i+"-"+j;
+            theNumberCell.className="number-cell";
+            container.appendChild(theNumberCell)
             if(board[i][j]===0){
-                theNumberCell.css('width','0');
-                theNumberCell.css('heigth','0');
-                theNumberCell.css('top',getPosTop(i,j));
-                theNumberCell.css('left',getPosLeft(i,j));
+                theNumberCell.style.width="0px";
+                theNumberCell.style.height="0px";
+                theNumberCell.style.top=getPosTop(i,j)+"px";
+                theNumberCell.style.left=getPosLeft(i,j)+"px";
             }
             else {
-                theNumberCell.css('width','100px');
-                theNumberCell.css('height','100px');
-                theNumberCell.css('top',getPosTop(i,j));
-                theNumberCell.css('left',getPosLeft(i,j));
-                theNumberCell.css('background',getNumberBackgroundColor(board[i][j]));
-                theNumberCell.css('color',getNumberColor(board[i][j]));
-                theNumberCell.text(board[i][j]);
+                theNumberCell.style.width="100px";
+                theNumberCell.style.height="100px";
+                theNumberCell.style.top=getPosTop(i,j)+'px';
+                theNumberCell.style.left=getPosLeft(i,j)+'px';
+                theNumberCell.style.background=getNumberBackgroundColor(board[i][j]);
+                theNumberCell.style.color=getNumberColor(board[i][j]);
+                theNumberCell.innerHTML=board[i][j];
             }
         }
 }
@@ -138,7 +153,9 @@ function updateBoardView() {
 
 //判断是否能向左移动
 function canMoveLeft(i,j) {
-    if(board[i][j-1]===0||board[i][j-1]===board[i][j])
+    if(j===0)
+        return false;
+    else if((board[i][j-1]==0)||(board[i][j-1]==board[i][j]))
         return true;
     else
         return false;
@@ -146,11 +163,143 @@ function canMoveLeft(i,j) {
 //向左最多移动到
 function canMoveLeftTo(i,j) {
     for(var k=j;k>=0;--k){
-        if(canMoveLeft(i,k))
-            continue;
-        else if(k===0)
+        if(k===0)
             return k;
+        else if(canMoveLeft(i,k))
+            continue;
         else
             return k;
     }
+}
+//判断是否能向右移动
+function canMoveRight(i,j) {
+    if(j===3)
+        return false;
+    else if(board[i][j+1]===0||board[i][j+1]===board[i][j])
+        return true;
+    else
+        return false
+}
+//向右最多能移动到
+function canMoveRightTo(i,j) {
+    for (var k=j;k<=3;++k){
+        if(k===4)
+            return k;
+        else if(canMoveRight(i,k))
+            continue;
+        else
+            return k;
+    }
+}
+//判断能否想上移动
+function  canMoveUp(i,j) {
+    if(i===0)
+        return false;
+    else if(board[i-1][j]===board[i][j]||board[i-1][j]===0)
+        return true;
+    else
+        return false;
+}
+//能向上移动到
+function canMoveUpTo(i,j) {
+    for(var k=i;k>=0;--k)
+    {
+        if(k===0)
+            return k;
+        else if(canMoveUp(k,j))
+            continue;
+        else
+            return k;
+    }
+}
+//判断能否向下移动
+function canMoveDown(i,j) {
+    if(i===3)
+        return false;
+    else if(board[i+1][j]===board[i][j]||board[i+1][j]===0)
+        return true;
+    else
+        return false;
+}
+//向下能够移动到
+function canMoveDownTo(i,j) {
+    for(var k=i;k<=3;++k)
+    {
+        if(k===0)
+            return k;
+        else if(canMoveUp(k,j))
+            continue;
+        else
+            return k;
+    }
+}
+//向左移动，按下向左时更新board
+function moveLeft() {
+    for (var i=0;i<4;++i)
+        for (var j=0;j<4;++j){
+            if(canMoveLeft(i,j)){
+                //可以移动到的任何位置的是相加 零相加还是本身
+                var k=canMoveLeftTo(i,j);
+                    var sum=board[i][k]+board[i][j];
+                    board[i][k]=sum;
+                    board[i][j]=0;
+                    showMove(i,j,i,k);
+            }
+        }
+}
+//向右移动 更新board
+function moveRight() {
+    for (var i=0;i<4;++i)
+        for (var j=2;j>=0;--j){
+            if(canMoveRight(i,j)){
+                var k=canMoveRightTo(i,j);
+                var sum=board[i][k]+board[i][j];
+                board[i][k]=sum;
+                board[i][j]=0;
+                showMove(i,j,i,k);
+            }
+        }
+}
+//向上移动 更新board
+function moveUp() {
+    for(i=1;i<4;++i)
+        for(j=0;j<4;++j){
+        if(canMoveUp(i,j)){
+            var k=canMoveUpTo(i,j);
+            var sum=board[i][j]+board[k][j];
+            board[k][j]=sum;
+            board[i][j]=0;
+            showMove(i,j,k,j);
+        }
+        }
+}
+//向下移动 更新board
+function moveDown() {
+    for (var i=2;i>=0;--i)
+        for(var j=0;j<4;++j){
+        if (canMoveDown(i,j))
+            var k=canMoveDownTo(i,j);
+            var sum=board[i][j]+board[k][j];
+            board[k][j]=sum;
+            board[i][j]=0;
+            showMove(i,j,k,j);
+        }
+}
+
+//判断游戏是否结束
+function  isGameOver() {
+    var flag=false;
+    for(var i=0;i<4;++i)
+        for (var j=0;j<4;++j){
+        if(canMoveUp(i,j)||canMoveDown(i,j)||canMoveRight(i,j)||canMoveLeft(i,j))
+            return false;
+        else
+            flag=true;
+        }
+        return flag;
+}
+//游戏结束提示框
+function gameOver() {
+if(isGameOver())
+    alert("Game Over！");
 }
