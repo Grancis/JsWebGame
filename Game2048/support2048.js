@@ -225,9 +225,9 @@ function canMoveDown(i,j) {
 function canMoveDownTo(i,j) {
     for(var k=i;k<=3;++k)
     {
-        if(k===0)
+        if(k===3)
             return k;
-        else if(canMoveUp(k,j))
+        else if(canMoveDown(k,j))
             continue;
         else
             return k;
@@ -246,6 +246,7 @@ function moveLeft() {
                     showMove(i,j,i,k);
             }
         }
+        return true;
 }
 //向右移动 更新board
 function moveRight() {
@@ -262,8 +263,8 @@ function moveRight() {
 }
 //向上移动 更新board
 function moveUp() {
-    for(i=1;i<4;++i)
-        for(j=0;j<4;++j){
+    for(var i=1;i<4;++i)
+        for(var j=0;j<4;++j){
         if(canMoveUp(i,j)){
             var k=canMoveUpTo(i,j);
             var sum=board[i][j]+board[k][j];
@@ -276,13 +277,15 @@ function moveUp() {
 //向下移动 更新board
 function moveDown() {
     for (var i=2;i>=0;--i)
-        for(var j=0;j<4;++j){
-        if (canMoveDown(i,j))
-            var k=canMoveDownTo(i,j);
-            var sum=board[i][j]+board[k][j];
-            board[k][j]=sum;
-            board[i][j]=0;
-            showMove(i,j,k,j);
+        for(var n=0;n<4;++n){
+        if (canMoveDown(i,n))
+            var k=canMoveDownTo(i,n);
+            if(board[k][n])
+            {var sum=board[i][n]+board[k][n];
+            board[k][n]=sum;}
+            else board[k][n]=board[i][n];
+            board[i][n]=0;
+            showMove(i,n,k,n);
         }
 }
 

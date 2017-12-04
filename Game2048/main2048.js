@@ -4,54 +4,56 @@ function newGame() {
     initBoard();
     bornNewNumber();
     bornNewNumber();
-    bornNewNumber();
-    bornNewNumber();
-    bornNewNumber();
-    bornNewNumber();
 }
-setTimeout("moveLeft()",1000);
-setTimeout("updateBoardView()",1500);
-setTimeout("updateBoardView()",2000);
-setTimeout("updateBoardView()",2500);
-// setTimeout("moveLeft()",1000);
-// bornNewNumber();
-// setTimeout("moveLeft()",1000);
-// function keyDown() {
-//     switch (window.event.keyCode){
-//         //left
-//         case 37:
-//             moveLeft();
-//             bornNewNumber();
-//             updateBoardView();
-//             if(isGameOver())
-//                 gameOver();
-//             break;
-//             //up
-//         case 38:
-//             moveUp();
-//             bornNewNumber();
-//             updateBoardView();
-//             if(isGameOver())
-//                 gameOver();
-//             break;
-//         case 39: //right
-//             moveRight();
-//             bornNewNumber();
-//             updateBoardView();
-//             if(isGameOver())
-//                 gameOver();
-//             break;
-//         case 40:    //down
-//             moveDown();
-//             bornNewNumber();
-//             updateBoardView();
-//             if(isGameOver())
-//                 gameOver();
-//     }
-// }
-//
+function keyDown(e) {
+    var e=e?e:window.event;
+    var currentKey=e.keyCode||e.charCode||e.which;
+    switch (currentKey){
+        //left
+        case 37:
+            if(moveLeft()){
+                bornNewNumber();
+                setTimeout("updateBoardView()",500);
+                if(isGameOver())
+                    gameOver();
+            }
+            break;
+            //up
+        case 38:
+            if(true){
+                moveUp();
+                bornNewNumber();
+                setTimeout("updateBoardView()",500);
+                if(isGameOver())
+                    gameOver();
+            }
+            break;
+        case 39: //right
+            if(true){
+                moveRight();
+                bornNewNumber();
+                setTimeout("updateBoardView()",500);
+                if(isGameOver())
+                    gameOver();
+            }
+            break;
+        case 40:    //down
+            if(true){
+                moveDown();
+                bornNewNumber();
+                setTimeout("updateBoardView()",500);
+                if(isGameOver())
+                    gameOver();
+            }
+            break;
+}
+}
+
 window.onload=function () {
     newGame();
     updateBoardView();
 }
-// document.onkeyDown=keyDown();
+var doc=document.getElementsByTagName("body");
+document.onkeydown=function (e) {
+    keyDown();
+}
