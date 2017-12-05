@@ -23,7 +23,7 @@ function keyDown(e) {
             if(true){
                 moveUp();
                 bornNewNumber();
-                setTimeout("updateBoardView()",500);
+                setTimeout("updateBoardView()",100);
                 if(isGameOver())
                     gameOver();
             }
@@ -32,7 +32,7 @@ function keyDown(e) {
             if(true){
                 moveRight();
                 bornNewNumber();
-                setTimeout("updateBoardView()",500);
+                setTimeout("updateBoardView()",100);
                 if(isGameOver())
                     gameOver();
             }
@@ -41,7 +41,7 @@ function keyDown(e) {
             if(true){
                 moveDown();
                 bornNewNumber();
-                setTimeout("updateBoardView()",500);
+                setTimeout("updateBoardView()",100);
                 if(isGameOver())
                     gameOver();
             }
@@ -53,7 +53,6 @@ window.onload=function () {
     newGame();
     updateBoardView();
 }
-var doc=document.getElementsByTagName("body");
 document.onkeydown=function (e) {
     keyDown();
 }

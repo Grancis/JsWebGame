@@ -71,11 +71,6 @@ function getRandomNumber(){
     return Math.random()>0.5 ? 2:4;
 }
 //拿到一个0到3的数，用于随机坐标
-//先封装一下坐标值
-index={
-    x:0,
-    y:0
-}
 function getRandomIndex() {
     return Math.floor(Math.random()*4);
 }
@@ -138,6 +133,16 @@ function updateBoardView() {
                 theNumberCell.style.top=getPosTop(i,j)+"px";
                 theNumberCell.style.left=getPosLeft(i,j)+"px";
             }
+            else if(board[i][j]>100){
+                theNumberCell.style.width="100px";
+                theNumberCell.style.height="100px";
+                theNumberCell.style.top=getPosTop(i,j)+'px';
+                theNumberCell.style.left=getPosLeft(i,j)+'px';
+                theNumberCell.style.background=getNumberBackgroundColor(board[i][j]);
+                theNumberCell.style.color=getNumberColor(board[i][j]);
+                theNumberCell.style.fontSize="40px";
+                theNumberCell.innerHTML=board[i][j];
+            }
             else {
                 theNumberCell.style.width="100px";
                 theNumberCell.style.height="100px";
@@ -148,6 +153,8 @@ function updateBoardView() {
                 theNumberCell.innerHTML=board[i][j];
             }
         }
+        var scoreText=document.getElementById("score");
+        scoreText.innerHTML="Score:"+score;
 }
 //进行移动时需要的函数
 
@@ -178,12 +185,12 @@ function canMoveRight(i,j) {
     else if(board[i][j+1]===0||board[i][j+1]===board[i][j])
         return true;
     else
-        return false
+        return false;
 }
 //向右最多能移动到
 function canMoveRightTo(i,j) {
     for (var k=j;k<=3;++k){
-        if(k===4)
+        if(k===3)
             return k;
         else if(canMoveRight(i,k))
             continue;
@@ -221,7 +228,7 @@ function canMoveDown(i,j) {
     else
         return false;
 }
-//向下能够移动到
+//向下能够移动到k
 function canMoveDownTo(i,j) {
     for(var k=i;k<=3;++k)
     {
@@ -240,13 +247,14 @@ function moveLeft() {
             if(canMoveLeft(i,j)){
                 //可以移动到的任何位置的是相加 零相加还是本身
                 var k=canMoveLeftTo(i,j);
-                    var sum=board[i][k]+board[i][j];
-                    board[i][k]=sum;
-                    board[i][j]=0;
-                    showMove(i,j,i,k);
+                if(board[i][k]===board[i][j]&&board[i][k]!==0)
+                    ++score;
+                var sum=board[i][k]+board[i][j];
+                board[i][k]=sum;
+                board[i][j]=0;
+                showMove(i,j,i,k);
             }
         }
-        return true;
 }
 //向右移动 更新board
 function moveRight() {
@@ -254,6 +262,8 @@ function moveRight() {
         for (var j=2;j>=0;--j){
             if(canMoveRight(i,j)){
                 var k=canMoveRightTo(i,j);
+                if(board[i][k]===board[i][j]&&board[i][k]!==0)
+                    ++score;
                 var sum=board[i][k]+board[i][j];
                 board[i][k]=sum;
                 board[i][j]=0;
@@ -267,6 +277,8 @@ function moveUp() {
         for(var j=0;j<4;++j){
         if(canMoveUp(i,j)){
             var k=canMoveUpTo(i,j);
+            if(board[i][j]===board[k][j]&board[k][j]!==0)
+                ++score;
             var sum=board[i][j]+board[k][j];
             board[k][j]=sum;
             board[i][j]=0;
@@ -278,14 +290,15 @@ function moveUp() {
 function moveDown() {
     for (var i=2;i>=0;--i)
         for(var n=0;n<4;++n){
-        if (canMoveDown(i,n))
+        if (canMoveDown(i,n)){
             var k=canMoveDownTo(i,n);
-            if(board[k][n])
-            {var sum=board[i][n]+board[k][n];
-            board[k][n]=sum;}
-            else board[k][n]=board[i][n];
+            if(board[i][n]===board[k][n]&board[k][n]!==0)
+                ++score;
+            var sum=board[i][n]+board[k][n];
+            board[k][n]=sum;
             board[i][n]=0;
             showMove(i,n,k,n);
+        }
         }
 }
 
